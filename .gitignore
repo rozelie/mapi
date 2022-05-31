@@ -617,3 +617,6 @@ MigrationBackup/
 
 # PyCharm
 .idea
+
+# Env files
+.env
