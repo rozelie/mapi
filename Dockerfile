@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . .
 
 RUN pip install -r requirements.txt
-RUN pip install -r mapi
+RUN pip install /app
 
 EXPOSE 80
 CMD ["python", "-m" , "myapi"]
