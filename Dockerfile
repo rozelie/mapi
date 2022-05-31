@@ -9,4 +9,4 @@ RUN pip install -r requirements.txt
 RUN pip install /app
 
 EXPOSE 8000
-CMD ["python", "-m" , "mapi"]
+CMD ["uvicorn", "mapi.__main__:app", "--host", "0.0.0.0", "--port", "8000"]
