@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     env: Env = Env.LOCAL
     admin_password: Optional[str] = None
     secret_key: Optional[str] = None
+    port: int = 8000
 
     twilio_account_sid: Optional[str] = None
     twilio_auth_token: Optional[str] = None
