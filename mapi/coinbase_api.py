@@ -1,8 +1,4 @@
-"""
-https://docs.cloud.coinbase.com/sign-in-with-coinbase/docs/api-transactions
-https://github.com/coinbase/coinbase-python/blob/master/coinbase/wallet/client.py
-https://medium.com/@samhagin/check-your-balance-on-coinbase-using-python-5641ff769f91
-"""
+
 from typing import Optional
 
 from dataclasses import dataclass
