@@ -19,13 +19,13 @@ def get_settings():
     return Settings()
 
 
-@app.get("/openapi.json")
-async def get_open_api_endpoint(credentials: HTTPBasicCredentials = Depends(security)):
+@app.get("/openapi.json", include_in_schema=False)
+async def get_open_api(credentials: HTTPBasicCredentials = Depends(security), ):
     auth.verify_is_admin(credentials)
     return JSONResponse(get_openapi(title="FastAPI", version=str(1), routes=app.routes))
 
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def get_docs(
     credentials: HTTPBasicCredentials = Depends(security),
     settings: Settings = Depends(get_settings),
