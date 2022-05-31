@@ -2,5 +2,6 @@ coinbase==2.1.0
 fastapi==0.78.0
 gspread==5.3.2
 python-multipart==0.0.5
+tabulate==0.8.9
 twilio==7.9.1
 uvicorn==0.17.6
