@@ -12,13 +12,13 @@ from functools import cached_property
 import coinbase.wallet.error
 from coinbase.wallet.client import Client as CoinbaseClient_
 from coinbase.wallet.client import Transaction
+
 from mapi.config import Settings
 
 PAGINATION_MAX_LIMIT = 300
 
 
 class CoinbaseClient:
-
     def __init__(self, settings: Settings):
         self.client = CoinbaseClient_(settings.coinbase_api_key, settings.coinbase_api_secret)
 

@@ -1,5 +1,6 @@
-from mapi import coinbase_api, scheduled_buys
 from tabulate import tabulate
+
+from mapi import coinbase_api, scheduled_buys
 
 TILE_FORMAT = "===============\n{name}\n==============="
 Wallets = list[coinbase_api.Wallet]

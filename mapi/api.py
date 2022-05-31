@@ -1,9 +1,10 @@
 from datetime import datetime
 from functools import lru_cache
 
+from fastapi import Depends, FastAPI
+
 from mapi import coinbase_api, tables, twilio_client
 from mapi.config import Settings
-from fastapi import Depends, FastAPI
 
 app = FastAPI(docs_url="/")
 

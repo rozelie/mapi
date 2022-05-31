@@ -1,5 +1,6 @@
-from enum import Enum
 from typing import Optional
+
+from enum import Enum
 
 from pydantic import BaseSettings
 
@@ -32,6 +33,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-
-
