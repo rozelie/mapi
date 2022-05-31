@@ -8,5 +8,5 @@ COPY . .
 RUN pip install -r requirements.txt
 RUN pip install /app
 
-EXPOSE 80
+EXPOSE 8000
 CMD ["python", "-m" , "myapi"]
