@@ -12,6 +12,9 @@ class Env(Enum):
 
 class Settings(BaseSettings):
     env: Env = Env.LOCAL
+    admin_password: Optional[str] = None
+    secret_key: Optional[str] = None
+
     twilio_account_sid: Optional[str] = None
     twilio_auth_token: Optional[str] = None
     twilio_virtual_phone_number: Optional[str] = None

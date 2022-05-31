@@ -1,5 +1,6 @@
-from setuptools import find_packages, setup
 from pathlib import Path
+
+from setuptools import find_packages, setup
 
 requirements = Path("requirements.txt").read_text().splitlines()
 dev_requirements = Path("dev_requirements.txt").read_text().splitlines()
