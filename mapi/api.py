@@ -5,7 +5,7 @@ from fastapi import Depends, FastAPI
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, HTMLResponse
 
 from mapi import auth, coinbase_api, tables, twilio_client
 from mapi.config import Settings
@@ -32,6 +32,16 @@ async def get_docs(
 ):
     auth.verify_is_admin(credentials)
     return get_swagger_ui_html(openapi_url="/openapi.json", title="docs")
+
+
+@app.get("/crypto/summary")
+async def crypto_summary(
+    credentials: HTTPBasicCredentials = Depends(security),
+    settings: Settings = Depends(get_settings),
+):
+    auth.verify_is_admin(credentials)
+    message = _get_message(settings)
+    return HTMLResponse(f"<code>{message}</code>")
 
 
 @app.post("/twilio")
