@@ -46,7 +46,7 @@ jobs:
           runtime: python3
           region: ${{ secrets.AWS_REGION }}
           cpu : 1
-          memory : 1
+          memory : 2
           port: 80
           wait-for-service-stability: true
 
