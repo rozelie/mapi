@@ -32,23 +32,7 @@ jobs:
           ECR_REPOSITORY: mapi
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
-      - name: Deploy to App Runner
-        id: deploy-apprunner
-        uses: awslabs/amazon-app-runner-deploy@main
-        with:
-          service: app-runner-image-deploy-service
-          image: ${{ steps.build-image.outputs.image }}
-          access-role-arn: ${{ secrets.ROLE_ARN }}
-          runtime: python3
-          region: ${{ secrets.AWS_REGION }}
-          cpu : 1
-          memory : 2
-          port: 80
-          wait-for-service-stability: true
-
-      - name: App Runner output
-        run: echo "App runner output ${{ steps.deploy-apprunner.outputs.service-id }}"
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:latest"
