@@ -1,13 +1,16 @@
 import secrets
 
-from fastapi import HTTPException
-from fastapi.security import HTTPBasicCredentials
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette import status
 
 from mapi.config import settings
 
+security = HTTPBasic()
 
-def verify_is_admin(credentials: HTTPBasicCredentials):
+
+def verify_is_admin(credentials: HTTPBasicCredentials = Depends(security)):
+    # def verify_is_admin(credentials: HTTPBasicCredentials):
     correct_username = secrets.compare_digest(credentials.username, "admin")
     correct_password = secrets.compare_digest(credentials.password, settings.admin_password)
     if not (correct_username and correct_password):

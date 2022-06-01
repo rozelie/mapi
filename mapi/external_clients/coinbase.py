@@ -5,13 +5,13 @@ from datetime import date
 import coinbase.wallet.error
 from coinbase.wallet.client import Client as CoinbaseClient_
 
-from mapi.config import Settings
+from mapi.config import settings
 
 PAGINATION_MAX_LIMIT = 300
 
 
 class CoinbaseClient:
-    def __init__(self, settings: Settings):
+    def __init__(self):
         self.client = CoinbaseClient_(settings.coinbase_api_key, settings.coinbase_api_secret)
 
     def get_wallet_transactions(self, wallet_id: str):

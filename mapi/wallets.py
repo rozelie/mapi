@@ -6,8 +6,7 @@ from functools import cached_property
 
 from coinbase.wallet.client import Transaction
 
-from mapi import coinbase_api
-from mapi.config import Settings
+from mapi.external_clients import coinbase
 
 
 @dataclass
@@ -65,9 +64,9 @@ class Wallets:
         return sum(w.balance for w in self.wallets)
 
 
-def get_wallets(settings: Settings) -> Wallets:
+def get_wallets() -> Wallets:
     wallets = []
-    coinbase_client = coinbase_api.CoinbaseClient(settings)
+    coinbase_client = coinbase.CoinbaseClient()
     today = datetime.utcnow()
     yesterday = today - timedelta(days=1)
     for wallet in coinbase_client.get_accounts():
