@@ -13,15 +13,15 @@ def get_portfolio_text_message(wallets: Wallets):
     message = "\n\n".join(
         [
             now,
-            _get_portfolio(wallets),
-            _get_daily_moves(wallets),
-            _get_monthly_investments(),
+            _get_portfolio_table(wallets),
+            _get_daily_moves_table(wallets),
+            _get_monthly_investments_table(),
         ]
     )
     return message
 
 
-def _get_portfolio(wallets: Wallets) -> str:
+def _get_portfolio_table(wallets: Wallets) -> str:
     total_balance_formatted = f"\nTotal Balance: ${wallets.balance:,.2f}"
     total_pnl_formatted = f"Total Pnl: ${wallets.pnl:,.2f}"
     portfolio = sorted(
@@ -40,7 +40,7 @@ def _get_portfolio(wallets: Wallets) -> str:
     )
 
 
-def _get_daily_moves(wallets: Wallets) -> str:
+def _get_daily_moves_table(wallets: Wallets) -> str:
     daily_moves = sorted(
         [[w.name, round(w.daily_percentage_increase)] for w in wallets],
         key=lambda x: x[1],
@@ -55,7 +55,7 @@ def _get_daily_moves(wallets: Wallets) -> str:
     )
 
 
-def _get_monthly_investments() -> str:
+def _get_monthly_investments_table() -> str:
     rows = sorted(
         [[b.coin, round(b.per_month_usd)] for b in scheduled_buys.SCHEDULED_BUYS],
         key=lambda x: x[1],
