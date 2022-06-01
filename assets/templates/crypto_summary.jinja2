@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+{% macro to_currency(number) -%}
+    {{ "${:,.2f}".format(number) }}
+{%- endmacro -%}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Crypto Summary</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+
+
+</head>
+<style>
+    table {
+        margin-bottom: 30px;
+    }
+
+    body {
+        margin: 2% 5%;
+    }
+
+    h1 {
+        color: royalblue;
+    }
+
+    table tr th {
+        padding: 2px 5px;
+        text-align: left;
+    }
+
+    table tr td {
+        padding: 2px 5px;
+        text-align: right;
+    }
+
+
+    .row-wrapper {
+        display: grid;
+        grid-auto-flow: column;
+        grid-gap: 100px;
+        grid-template-columns: auto auto 1fr;
+    }
+</style>
+<body>
+<div class="row-wrapper">
+    <div class="row-item">
+        <h1>Portfolio Summary</h1>
+
+        <table>
+            <tr>
+                <td style="font-weight: bold">Total Balance</td>
+                <td>{{ to_currency(wallets.balance) }}</td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold">Total Pnl</td>
+                {% if wallets.pnl > 0 %}
+                    <td style="color: green">{{ to_currency(wallets.pnl) }}</td>
+                {% else %}
+                    <td style="color: red">{{ to_currency(wallets.pnl) }}</td>
+                {% endif %}
+            </tr>
+        </table>
+
+        <table id="portfolio-summary-table">
+            <thead>
+            <tr>
+                <th>Wallet</th>
+                <th>Balance</th>
+                <th>Cost Basis</th>
+                <th>PnL</th>
+                <th>Daily Move %</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for wallet in wallets|sort(attribute="pnl", reverse=True) %}
+                <tr>
+                    <td>{{ wallet.name }}</td>
+                    <td>{{ wallet.balance|int }}</td>
+                    <td>{{ wallet.cost_basis|int }}</td>
+                    {% if wallet.pnl > 0 %}
+                        <td style="color: green">{{ wallet.pnl|int }}</td>
+                    {% else %}
+                        <td style="color: red">{{ wallet.pnl|int }}</td>
+                    {% endif %}
+                    {% if wallet.daily_percentage_increase > 0 %}
+                        <td style="color: green">{{ wallet.daily_percentage_increase|int }}</td>
+                    {% else %}
+                        <td style="color: red">{{ wallet.daily_percentage_increase|int }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="row-item">
+        <h1>Scheduled Contributions</h1>
+        <table>
+            <tr>
+                <th>Wallet</th>
+                <th>Contribution/Month</th>
+            </tr>
+            {% for buy in scheduled_buys|sort(attribute="per_month_usd", reverse=True) %}
+                <tr>
+                    <td>{{ buy.coin }}</td>
+                    <td>{{ buy.per_month_usd|int }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <table>
+            <tr>
+                <td style="font-weight: bold">Total Monthly Investment</td>
+                <td>{{ to_currency(scheduled_buys|sum(attribute="per_month_usd")) }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        $('#portfolio-summary-table').DataTable({
+            paging: false,
+        });
+    });
+</script>
+</body>
+</html>
