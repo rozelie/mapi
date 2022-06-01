@@ -18,7 +18,6 @@ def get_portfolio_text_message(wallets: Wallets):
             _get_monthly_investments(),
         ]
     )
-    print(message)
     return message
 
 
