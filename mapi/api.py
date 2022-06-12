@@ -7,13 +7,13 @@ from starlette.responses import FileResponse, HTMLResponse, JSONResponse
 
 import mapi.routers.crypto
 import mapi.routers.twilio
-from mapi import auth
+from mapi import dependencies
 
 app = FastAPI(
     docs_url=None,
     redoc_url=None,
     openapi_url=None,
-    dependencies=[Depends(auth.verify_is_admin)],
+    dependencies=[Depends(dependencies.verify_is_admin)],
 )
 for router in [
     mapi.routers.twilio.router,
@@ -35,7 +35,7 @@ async def index():
 
 @app.get("/openapi.json", include_in_schema=False)
 async def get_open_api():
-    return JSONResponse(get_openapi(title="FastAPI", version=str(1), routes=app.routes))
+    return JSONResponse(get_openapi(title="FastAPI", version="1", routes=app.routes))
 
 
 @app.get("/docs", include_in_schema=False)
