@@ -1,12 +1,17 @@
 from typing import Optional
 
+import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from functools import cached_property
 
 from coinbase.wallet.client import Transaction
 
+from mapi import persistence
+from mapi.config import settings
 from mapi.external_clients import coinbase
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -52,6 +57,9 @@ class Wallet:
 class Wallets:
     wallets: list[Wallet]
 
+    def __post_init__(self):
+        self.last_updated = datetime.now()
+
     def __iter__(self):
         yield from self.wallets
 
@@ -64,7 +72,17 @@ class Wallets:
         return sum(w.balance for w in self.wallets)
 
 
-def get_wallets() -> Wallets:
+def get_wallets(from_cache: bool) -> Wallets:
+    logger.info(f"Retrieving wallets: {from_cache=}")
+    if from_cache:
+        try:
+            return persistence.load_pickle(settings.wallets_pickle_path)
+        except FileNotFoundError:
+            logger.info(
+                f"File not found at {settings.wallets_pickle_path} - will reload wallet data"
+            )
+            pass
+
     wallets = []
     coinbase_client = coinbase.CoinbaseClient()
     today = datetime.utcnow()
@@ -82,4 +100,6 @@ def get_wallets() -> Wallets:
                 )
             )
 
-    return Wallets(wallets)
+    wallets = Wallets(wallets)
+    persistence.persist_to_pickle(settings.wallets_pickle_path, wallets)
+    return wallets

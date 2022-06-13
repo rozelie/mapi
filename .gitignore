@@ -620,3 +620,6 @@ MigrationBackup/
 
 # Env files
 .env
+
+# Pickle files
+*.pickle

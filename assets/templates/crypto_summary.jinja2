@@ -12,7 +12,6 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
 
-
 </head>
 <style>
     table {
@@ -20,7 +19,7 @@
     }
 
     body {
-        margin: 2% 5%;
+        margin: 2% 30%;
     }
 
     h1 {
@@ -36,90 +35,80 @@
         padding: 2px 5px;
         text-align: right;
     }
-
-
-    .row-wrapper {
-        display: grid;
-        grid-auto-flow: column;
-        grid-gap: 100px;
-        grid-template-columns: auto auto 1fr;
-    }
 </style>
 <body>
-<div class="row-wrapper">
-    <div class="row-item">
-        <h1>Portfolio Summary</h1>
+<h1>Portfolio Summary</h1>
 
-        <table>
-            <tr>
-                <td style="font-weight: bold">Total Balance</td>
-                <td>{{ to_currency(wallets.balance) }}</td>
-            </tr>
-            <tr>
-                <td style="font-weight: bold">Total Pnl</td>
-                {% if wallets.pnl > 0 %}
-                    <td style="color: green">{{ to_currency(wallets.pnl) }}</td>
-                {% else %}
-                    <td style="color: red">{{ to_currency(wallets.pnl) }}</td>
-                {% endif %}
-            </tr>
-        </table>
+<table>
+    <tr>
+        <td style="font-weight: bold">Total Balance</td>
+        <td>{{ to_currency(wallets.balance) }}</td>
+    </tr>
+    <tr>
+        <td style="font-weight: bold">Total Pnl</td>
+        {% if wallets.pnl > 0 %}
+            <td style="color: green">{{ to_currency(wallets.pnl) }}</td>
+        {% else %}
+            <td style="color: red">{{ to_currency(wallets.pnl) }}</td>
+        {% endif %}
+    </tr>
+    <tr>
+        <td>Last Updated</td>
+        <td>{{ wallets.last_updated.strftime("%H:%M %m/%d/%Y") }}</td>
+    </tr>
+</table>
 
-        <table id="portfolio-summary-table">
-            <thead>
-            <tr>
-                <th>Wallet</th>
-                <th>Balance</th>
-                <th>Cost Basis</th>
-                <th>PnL</th>
-                <th>Daily Move %</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for wallet in wallets|sort(attribute="pnl", reverse=True) %}
-                <tr>
-                    <td>{{ wallet.name }}</td>
-                    <td>{{ wallet.balance|int }}</td>
-                    <td>{{ wallet.cost_basis|int }}</td>
-                    {% if wallet.pnl > 0 %}
-                        <td style="color: green">{{ wallet.pnl|int }}</td>
-                    {% else %}
-                        <td style="color: red">{{ wallet.pnl|int }}</td>
-                    {% endif %}
-                    {% if wallet.daily_percentage_increase > 0 %}
-                        <td style="color: green">{{ wallet.daily_percentage_increase|int }}</td>
-                    {% else %}
-                        <td style="color: red">{{ wallet.daily_percentage_increase|int }}</td>
-                    {% endif %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+<table id="portfolio-summary-table">
+    <thead>
+    <tr>
+        <th>Wallet</th>
+        <th>Balance</th>
+        <th>Cost Basis</th>
+        <th>PnL</th>
+        <th>Daily Move %</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for wallet in wallets|sort(attribute="pnl", reverse=True) %}
+        <tr>
+            <td>{{ wallet.name }}</td>
+            <td>{{ wallet.balance|int }}</td>
+            <td>{{ wallet.cost_basis|int }}</td>
+            {% if wallet.pnl > 0 %}
+                <td style="color: green">{{ wallet.pnl|int }}</td>
+            {% else %}
+                <td style="color: red">{{ wallet.pnl|int }}</td>
+            {% endif %}
+            {% if wallet.daily_percentage_increase > 0 %}
+                <td style="color: green">{{ wallet.daily_percentage_increase|int }}</td>
+            {% else %}
+                <td style="color: red">{{ wallet.daily_percentage_increase|int }}</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 
-    </div>
 
-    <div class="row-item">
-        <h1>Scheduled Contributions</h1>
-        <table>
-            <tr>
-                <th>Wallet</th>
-                <th>Contribution/Month</th>
-            </tr>
-            {% for buy in scheduled_buys|sort(attribute="per_month_usd", reverse=True) %}
-                <tr>
-                    <td>{{ buy.coin }}</td>
-                    <td>{{ buy.per_month_usd|int }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-        <table>
-            <tr>
-                <td style="font-weight: bold">Total Monthly Investment</td>
-                <td>{{ to_currency(scheduled_buys|sum(attribute="per_month_usd")) }}</td>
-            </tr>
-        </table>
-    </div>
-</div>
+<h1>Scheduled Contributions</h1>
+<table>
+    <tr>
+        <th>Wallet</th>
+        <th>Contribution/Month</th>
+    </tr>
+    {% for buy in scheduled_buys|sort(attribute="per_month_usd", reverse=True) %}
+        <tr>
+            <td>{{ buy.coin }}</td>
+            <td>{{ buy.per_month_usd|int }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <tr>
+        <td style="font-weight: bold">Total Monthly Investment</td>
+        <td>{{ to_currency(scheduled_buys|sum(attribute="per_month_usd")) }}</td>
+    </tr>
+</table>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
@@ -136,6 +125,7 @@
     $(document).ready(function () {
         $('#portfolio-summary-table').DataTable({
             paging: false,
+            searching: false,
         });
     });
 </script>

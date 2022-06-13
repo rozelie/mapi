@@ -1,9 +1,13 @@
 from typing import Optional
 
+import logging
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
 
 from pydantic import BaseSettings
+
+logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
 
 
 class Env(Enum):
@@ -13,6 +17,7 @@ class Env(Enum):
 
 class Settings(BaseSettings):
     env: Env = Env.LOCAL
+    wallets_pickle_path: Path = Path().absolute() / "wallets.pickle"
     admin_password: Optional[str] = None
     secret_key: Optional[str] = None
     port: int = 8000
