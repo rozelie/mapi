@@ -48,7 +48,7 @@ async def get_docs():
 
 
 def start_scheduler():
-    schedule.every(1).minutes.do(wallets.get_wallets, from_cache=False)
+    schedule.every(30).minutes.do(wallets.get_wallets, from_cache=False)
     while True:
         schedule.run_pending()
         time.sleep(1)
