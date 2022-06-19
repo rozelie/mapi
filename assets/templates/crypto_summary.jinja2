@@ -64,6 +64,7 @@
         <th>Balance</th>
         <th>Cost Basis</th>
         <th>PnL</th>
+        <th>% Gain</th>
         <th>Daily Move %</th>
     </tr>
     </thead>
@@ -77,6 +78,11 @@
                 <td style="color: green">{{ wallet.pnl|int }}</td>
             {% else %}
                 <td style="color: red">{{ wallet.pnl|int }}</td>
+            {% endif %}
+            {% if wallet.percentage_gain > 0 %}
+                <td style="color: green">{{ wallet.percentage_gain|int }}%</td>
+            {% else %}
+                <td style="color: red">{{ wallet.percentage_gain|int }}%</td>
             {% endif %}
             {% if wallet.daily_percentage_increase > 0 %}
                 <td style="color: green">{{ wallet.daily_percentage_increase|int }}</td>

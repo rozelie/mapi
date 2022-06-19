@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from functools import cached_property
 
 from coinbase.wallet.client import Transaction
+from funcy import log_durations
 
 from mapi import persistence
 from mapi.config import settings
@@ -46,6 +47,13 @@ class Wallet:
         return self.balance - self.cost_basis
 
     @cached_property
+    def percentage_gain(self) -> float:
+        try:
+            return (self.balance - self.cost_basis) / self.cost_basis * 100
+        except ZeroDivisionError:
+            return 0.0
+
+    @cached_property
     def daily_percentage_increase(self) -> float:
         if not self.current_spot_price or not self.yesterday_spot_price:
             return 0
@@ -72,8 +80,8 @@ class Wallets:
         return sum(w.balance for w in self.wallets)
 
 
+@log_durations(logger.info)
 def get_wallets(from_cache: bool) -> Wallets:
-    logger.info(f"Retrieving wallets: {from_cache=}")
     if from_cache:
         try:
             return persistence.load_pickle(settings.wallets_pickle_path)
