@@ -21,7 +21,11 @@ class CoinbaseClient:
         return self.client.get_transactions(wallet_id, limit=PAGINATION_MAX_LIMIT).data
 
     def get_accounts(self):
-        return self.client.get_accounts(limit=PAGINATION_MAX_LIMIT).data[2:]
+        try:
+            return self.client.get_accounts(limit=PAGINATION_MAX_LIMIT).data[2:]
+        except Exception:
+            logger.exception("Failed to retrieve accounts")
+            return []
 
     @log_durations(logger.info, unit="s", repr_len=100)
     def get_spot_price(self, coin: str, date_: date = None) -> Optional[float]:
