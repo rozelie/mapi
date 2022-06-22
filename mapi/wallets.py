@@ -22,6 +22,8 @@ class Wallet:
     balance: float
     transactions: list[Transaction]
     yesterday_spot_price: Optional[float] = None
+    twelve_hours_ago_spot_price: Optional[float] = None
+    one_hour_ago_spot_price: Optional[float] = None
     current_spot_price: Optional[float] = None
 
     @cached_property
@@ -55,10 +57,16 @@ class Wallet:
 
     @cached_property
     def daily_percentage_increase(self) -> float:
-        if not self.current_spot_price or not self.yesterday_spot_price:
-            return 0
-        daily_difference = self.current_spot_price - self.yesterday_spot_price
-        return daily_difference / self.current_spot_price * 100
+        return _get_percentage_increase(self.current_spot_price, self.yesterday_spot_price)
+
+    @cached_property
+    def twelve_hour_percentage_increase(self) -> float:
+        return _get_percentage_increase(self.current_spot_price, self.twelve_hours_ago_spot_price)
+
+    @cached_property
+    def one_hour_percentage_increase(self) -> float:
+        return _get_percentage_increase(self.current_spot_price, self.one_hour_ago_spot_price)
+
 
 
 @dataclass
@@ -95,6 +103,8 @@ def get_wallets(from_cache: bool) -> Wallets:
     coinbase_client = coinbase.CoinbaseClient()
     today = datetime.utcnow()
     yesterday = today - timedelta(days=1)
+    twelve_hours_ago = today - timedelta(hours=12)
+    one_hour_ago = today - timedelta(hours=1)
     for wallet in coinbase_client.get_accounts():
         if balance := float(wallet.native_balance.amount):
             wallets.append(
@@ -103,6 +113,8 @@ def get_wallets(from_cache: bool) -> Wallets:
                     name=wallet.currency,
                     balance=balance,
                     yesterday_spot_price=coinbase_client.get_spot_price(wallet.currency, yesterday),
+                    twelve_hours_ago_spot_price=coinbase_client.get_spot_price(wallet.currency, twelve_hours_ago),
+                    one_hour_ago_spot_price=coinbase_client.get_spot_price(wallet.currency, one_hour_ago),
                     current_spot_price=coinbase_client.get_spot_price(wallet.currency),
                     transactions=coinbase_client.get_wallet_transactions(wallet.id),
                 )
@@ -111,3 +123,10 @@ def get_wallets(from_cache: bool) -> Wallets:
     wallets = Wallets(wallets)
     persistence.persist_to_pickle(settings.wallets_pickle_path, wallets)
     return wallets
+
+
+def _get_percentage_increase(current: float, past: float) -> float:
+    if not current or not past:
+        return 0.0
+    difference = current - past
+    return difference / current * 100
