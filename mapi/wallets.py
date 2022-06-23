@@ -101,7 +101,7 @@ def get_wallets(from_cache: bool) -> Wallets:
 
     wallets = []
     coinbase_client = coinbase.CoinbaseClient()
-    today = datetime.utcnow()
+    today = datetime.now()
     yesterday = today - timedelta(days=1)
     twelve_hours_ago = today - timedelta(hours=12)
     one_hour_ago = today - timedelta(hours=1)
