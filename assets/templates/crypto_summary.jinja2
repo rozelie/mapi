@@ -63,8 +63,9 @@
         <th>Wallet</th>
         <th>Cost Basis</th>
         <th>PnL</th>
-{#        <th>% Gain</th>#}
-        <th>1h / 12h / 24h</th>
+        <th>% Gain</th>
+        <th>1h</th>
+        <th>24h</th>
     </tr>
     </thead>
     <tbody>
@@ -73,57 +74,28 @@
             <td>{{ wallet.name }}</td>
             <td>{{ wallet.cost_basis|int }}</td>
             {% if wallet.pnl > 0 %}
-                <td style="color: green">{{ wallet.pnl|int }} ({{ wallet.percentage_gain|int }}%)</td>
+                <td style="color: green">{{ wallet.pnl|int }}</td>
             {% else %}
-                <td style="color: red">{{ wallet.pnl|int }} ({{ wallet.percentage_gain|int }}%)</td>
+                <td style="color: red">{{ wallet.pnl|int }}</td>
             {% endif %}
-{#            {% if wallet.percentage_gain > 0 %}#}
-{#                <td style="color: green">{{ wallet.percentage_gain|int }}%</td>#}
-{#            {% else %}#}
-{#                <td style="color: red">{{ wallet.percentage_gain|int }}%</td>#}
-{#            {% endif %}#}
-            <td>
+            {% if wallet.percentage_gain > 0 %}
+                <td style="color: green">{{ wallet.percentage_gain|int }}%</td>
+            {% else %}
+                <td style="color: red">{{ wallet.percentage_gain|int }}%</td>
+            {% endif %}
             {% if wallet.one_hour_percentage_increase > 0 %}
-                <span style="color: green">{{ wallet.one_hour_percentage_increase|int }}</span>
+                <td style="color: green">{{ wallet.one_hour_percentage_increase|int }}</td>
             {% else %}
-                <span style="color: red">{{ wallet.one_hour_percentage_increase|int }}</span>
+                <td style="color: red">{{ wallet.one_hour_percentage_increase|int }}</td>
             {% endif %}
-            /
-            {% if wallet.twelve_hour_percentage_increase > 0 %}
-                <span style="color: green">{{ wallet.twelve_hour_percentage_increase|int }}</span>
-            {% else %}
-                <span style="color: red">{{ wallet.twelve_hour_percentage_increase|int }}</span>
-            {% endif %}
-            /
             {% if wallet.daily_percentage_increase > 0 %}
-                <span style="color: green">{{ wallet.daily_percentage_increase|int }}</span>
+                <td style="color: green">{{ wallet.daily_percentage_increase|int }}</td>
             {% else %}
-                <span style="color: red">{{ wallet.daily_percentage_increase|int }}</span>
+                <td style="color: red">{{ wallet.daily_percentage_increase|int }}</td>
             {% endif %}
-        </td>
         </tr>
     {% endfor %}
     </tbody>
-</table>
-
-<h1 style="margin-top: 40px;">Scheduled Contributions</h1>
-<table>
-    <tr>
-        <th>Wallet</th>
-        <th>Contribution/Month</th>
-    </tr>
-    {% for buy in scheduled_buys|sort(attribute="per_month_usd", reverse=True) %}
-        <tr>
-            <td>{{ buy.coin }}</td>
-            <td>{{ buy.per_month_usd|int }}</td>
-        </tr>
-    {% endfor %}
-</table>
-<table>
-    <tr>
-        <td style="font-weight: bold">Total Monthly Investment</td>
-        <td>{{ to_currency(scheduled_buys|sum(attribute="per_month_usd")) }}</td>
-    </tr>
 </table>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"

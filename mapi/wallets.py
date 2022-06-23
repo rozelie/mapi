@@ -22,7 +22,6 @@ class Wallet:
     balance: float
     transactions: list[Transaction]
     yesterday_spot_price: Optional[float] = None
-    twelve_hours_ago_spot_price: Optional[float] = None
     one_hour_ago_spot_price: Optional[float] = None
     current_spot_price: Optional[float] = None
 
@@ -60,13 +59,8 @@ class Wallet:
         return _get_percentage_increase(self.current_spot_price, self.yesterday_spot_price)
 
     @cached_property
-    def twelve_hour_percentage_increase(self) -> float:
-        return _get_percentage_increase(self.current_spot_price, self.twelve_hours_ago_spot_price)
-
-    @cached_property
     def one_hour_percentage_increase(self) -> float:
         return _get_percentage_increase(self.current_spot_price, self.one_hour_ago_spot_price)
-
 
 
 @dataclass
@@ -103,7 +97,6 @@ def get_wallets(from_cache: bool) -> Wallets:
     coinbase_client = coinbase.CoinbaseClient()
     today = datetime.now()
     yesterday = today - timedelta(days=1)
-    twelve_hours_ago = today - timedelta(hours=12)
     one_hour_ago = today - timedelta(hours=1)
     for wallet in coinbase_client.get_accounts():
         if balance := float(wallet.native_balance.amount):
@@ -113,8 +106,9 @@ def get_wallets(from_cache: bool) -> Wallets:
                     name=wallet.currency,
                     balance=balance,
                     yesterday_spot_price=coinbase_client.get_spot_price(wallet.currency, yesterday),
-                    twelve_hours_ago_spot_price=coinbase_client.get_spot_price(wallet.currency, twelve_hours_ago),
-                    one_hour_ago_spot_price=coinbase_client.get_spot_price(wallet.currency, one_hour_ago),
+                    one_hour_ago_spot_price=coinbase_client.get_spot_price(
+                        wallet.currency, one_hour_ago
+                    ),
                     current_spot_price=coinbase_client.get_spot_price(wallet.currency),
                     transactions=coinbase_client.get_wallet_transactions(wallet.id),
                 )
