@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from functools import cached_property
 
+import pytz
 from coinbase.wallet.client import Transaction
 from funcy import log_durations
 
@@ -68,7 +69,7 @@ class Wallets:
     wallets: list[Wallet]
 
     def __post_init__(self):
-        self.last_updated = datetime.now()
+        self.last_updated = datetime.now(tz=pytz.timezone("US/Central"))
 
     def __iter__(self):
         yield from self.wallets
